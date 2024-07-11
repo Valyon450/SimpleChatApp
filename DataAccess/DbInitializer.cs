@@ -1,10 +1,12 @@
-﻿namespace DataAccess
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace DataAccess
 {
     public static class DbInitializer
     {
         public static void Initialize(SimpleChatDbContext context)
         {
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
             SeedDatabase(context);
         }
 
