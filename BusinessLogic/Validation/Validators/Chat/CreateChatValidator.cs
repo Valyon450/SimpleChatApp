@@ -13,7 +13,7 @@ namespace BusinessLogic.Validation.Validators.Chat
                 .MaximumLength(100)
                 .WithMessage("Chat name cannot be longer than 100 characters.");
 
-            RuleFor(x => x.CreatedById)
+            RuleFor(x => x.OwnerId)
                 .NotEmpty()
                 .WithMessage("Creator Id is required.")
                 .GreaterThan(0)

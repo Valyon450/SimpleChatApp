@@ -38,9 +38,9 @@ namespace BusinessLogic.Validation.Services
                 return validationResult;
             }
 
-            if (!await UserIdExists(requestObject.CreatedById))
+            if (!await UserIdExists(requestObject.OwnerId))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.CreatedById), "Creator Id does not exist."));
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.OwnerId), "User Id does not exist."));
             }
 
             return validationResult;
@@ -72,17 +72,17 @@ namespace BusinessLogic.Validation.Services
                 return validationResult;
             }
 
-            if (!await ChatIdExists(requestObject.Id))
+            if (!await ChatIdExists(requestObject.ChatId))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Chat Id does not exist."));
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.ChatId), "Chat Id does not exist."));
             }
 
             if (!await UserIdExists(requestObject.UserId))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "UserId does not exist."));
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "User Id does not exist."));
             }
 
-            if (await IsUserAlreadyMemberAsync(requestObject.Id, requestObject.UserId))
+            if (await IsUserAlreadyMemberAsync(requestObject.ChatId, requestObject.UserId))
             {
                 validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "User is already a member of this chat."));
             }
@@ -99,17 +99,17 @@ namespace BusinessLogic.Validation.Services
                 return validationResult;
             }
 
-            if (!await ChatIdExists(requestObject.Id))
+            if (!await ChatIdExists(requestObject.ChatId))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Chat Id does not exist."));
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.ChatId), "Chat Id does not exist."));
             }
 
             if (!await UserIdExists(requestObject.UserId))
             {
-                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "UserId does not exist."));
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "User Id does not exist."));
             }
 
-            if (!await IsUserAlreadyMemberAsync(requestObject.Id, requestObject.UserId))
+            if (!await IsUserAlreadyMemberAsync(requestObject.ChatId, requestObject.UserId))
             {
                 validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "The user is not a member of the chat"));
             }

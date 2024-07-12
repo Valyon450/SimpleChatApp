@@ -7,7 +7,7 @@ namespace BusinessLogic.Validation.Validators.Chat
     {
         public AddUserToChatValidator()
         {
-            RuleFor(x => x.Id)
+            RuleFor(x => x.ChatId)
                 .NotEmpty()
                 .WithMessage("Chat Id is required.")
                 .GreaterThan(0)

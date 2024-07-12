@@ -12,7 +12,8 @@ namespace BusinessLogic.Mappings
         public AutomapperProfile()
         {
             CreateMap<Chat, ChatDTO>()
-                .ForMember(dest => dest.CreatorName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
+                .ForMember(dest => dest.OwnerId, opt => opt.MapFrom(src => src.CreatedBy.Id))
+                .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.CreatedBy.UserName));
             CreateMap<CreateChatRequest, Chat>();
             CreateMap<UpdateChatRequest, Chat>();
 

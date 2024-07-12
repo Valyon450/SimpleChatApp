@@ -193,20 +193,20 @@ namespace WebApi.Controllers
         /// <summary>
         /// Deletes a chat.
         /// </summary>
-        /// <param name="id">Chat Id.</param>
+        /// <param name="chatId">Chat Id.</param>
         /// <param name="userId">Chat owner Id.</param>
         /// <param name="cancellationToken">Cancellation token for async operation.</param>
         /// <returns>No content if successful.</returns>
         /// <response code="204">Success</response>
         /// <response code="400">Bad request</response>
-        [HttpDelete("{id}")]
+        [HttpDelete("{chatId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete(int id, int userId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int chatId, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                await _chatService.DeleteAsync(id, userId, cancellationToken);
+                await _chatService.DeleteAsync(chatId, userId, cancellationToken);
 
                 return NoContent();
             }
