@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Entities
+﻿namespace BusinessLogic.DTOs
 {
     public class ChatDTO
     {

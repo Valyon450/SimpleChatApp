@@ -1,5 +1,5 @@
 ﻿using BusinessLogic.Requests.User;
-using DataAccess.Entities;
+using BusinessLogic.DTOs;
 
 namespace BusinessLogic.Services.Interfaces
 {
