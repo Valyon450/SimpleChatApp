@@ -18,7 +18,11 @@ namespace BusinessLogic.Services
         private readonly IUserValidationService _validationService;
         private readonly ILogger<UserService> _logger;
 
-        public UserService(ISimpleChatDbContext context, IMapper mapper, IUserValidationService validationService, ILogger<UserService> logger)
+        public UserService(
+            ISimpleChatDbContext context,
+            IMapper mapper,
+            IUserValidationService validationService,
+            ILogger<UserService> logger)
         {
             _context = context;
             _mapper = mapper;

@@ -15,7 +15,8 @@ namespace BusinessLogic.Validation.Services
         private readonly IValidator<AddUserToChatRequest> _addUserToChatValidator;
         private readonly IValidator<RemoveUserFromChatRequest> _removeUserFromChatValidator;
 
-        public ChatValidationService(ISimpleChatDbContext context,
+        public ChatValidationService(
+            ISimpleChatDbContext context,
             IValidator<CreateChatRequest> createValidator,
             IValidator<UpdateChatRequest> updateValidator,
             IValidator<AddUserToChatRequest> addUserToChatValidator,
@@ -49,6 +50,16 @@ namespace BusinessLogic.Validation.Services
         {
             var validationResult = await _updateValidator.ValidateAsync(requestObject);
 
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
+
+            if (!await ChatIdExists(requestObject.Id))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Chat Id does not exist."));
+            }
+
             return validationResult;
         }
 
@@ -61,9 +72,19 @@ namespace BusinessLogic.Validation.Services
                 return validationResult;
             }
 
+            if (!await ChatIdExists(requestObject.Id))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Chat Id does not exist."));
+            }
+
             if (!await UserIdExists(requestObject.UserId))
             {
                 validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "UserId does not exist."));
+            }
+
+            if (await IsUserAlreadyMemberAsync(requestObject.Id, requestObject.UserId))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "User is already a member of this chat."));
             }
 
             return validationResult;
@@ -78,17 +99,37 @@ namespace BusinessLogic.Validation.Services
                 return validationResult;
             }
 
+            if (!await ChatIdExists(requestObject.Id))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Chat Id does not exist."));
+            }
+
             if (!await UserIdExists(requestObject.UserId))
             {
                 validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "UserId does not exist."));
             }
 
+            if (!await IsUserAlreadyMemberAsync(requestObject.Id, requestObject.UserId))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.UserId), "The user is not a member of the chat"));
+            }
+
             return validationResult;
+        }
+
+        private async Task<bool> ChatIdExists(int id)
+        {
+            return await _context.Chat.AnyAsync(e => e.Id == id);
         }
 
         private async Task<bool> UserIdExists(int id)
         {
             return await _context.User.AnyAsync(e => e.Id == id);
+        }
+
+        private async Task<bool> IsUserAlreadyMemberAsync(int chatId, int userId)
+        {
+            return await _context.UserChat.AnyAsync(uc => uc.ChatId == chatId && uc.UserId == userId);
         }
     }
 }

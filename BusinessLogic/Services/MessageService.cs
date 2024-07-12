@@ -8,6 +8,8 @@ using DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using FluentValidation;
+using BusinessLogic.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BusinessLogic.Services
 {
@@ -17,20 +19,31 @@ namespace BusinessLogic.Services
         private readonly IMapper _mapper;
         private readonly IMessageValidationService _validationService;
         private readonly ILogger<MessageService> _logger;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public MessageService(ISimpleChatDbContext context, IMapper mapper, IMessageValidationService validationService, ILogger<MessageService> logger)
+        public MessageService(
+            ISimpleChatDbContext context,
+            IMapper mapper,
+            IMessageValidationService validationService,
+            ILogger<MessageService> logger,
+            IHubContext<ChatHub> hubContext)
         {
             _context = context;
             _mapper = mapper;
             _validationService = validationService;
             _logger = logger;
+            _hubContext = hubContext;
         }
 
         public async Task<IEnumerable<MessageDTO>?> GetAllAsync(CancellationToken cancellationToken)
         {
             try
             {
-                var messages = await _context.Message.ToListAsync(cancellationToken);
+                var messages = await _context.Message
+                    .Include(m => m.User)
+                    .Include(m => m.Chat)
+                    .ToListAsync(cancellationToken);
+
                 return _mapper.Map<IEnumerable<MessageDTO>>(messages);
             }
             catch (Exception ex)
@@ -44,7 +57,10 @@ namespace BusinessLogic.Services
         {
             try
             {
-                var message = await _context.Message.FindAsync(new object[] { id }, cancellationToken);
+                var message = await _context.Message
+                    .Include(m => m.User)
+                    .Include(m => m.Chat)
+                    .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
                 if (message == null)
                 {
@@ -79,6 +95,8 @@ namespace BusinessLogic.Services
 
                 _logger.LogInformation($"Message with Id: {message.Id} has been created successfully.");
 
+                await _hubContext.Clients.All.SendAsync("ReceiveMessage", message.UserId, message.Text);
+
                 return message.Id;
             }
             catch (Exception ex)
@@ -99,12 +117,7 @@ namespace BusinessLogic.Services
                     throw new ValidationException(validationResult.Errors);
                 }
 
-                var message = await _context.Message.FindAsync(new object[] { requestObject.Id }, cancellationToken);
-
-                if (message == null)
-                {
-                    throw new Exception($"Message with Id: {requestObject.Id} not found.");
-                }
+                var message = await _context.Message.FindAsync(new object[] { requestObject.Id }, cancellationToken);                
 
                 // Map the updated properties from the request object to the existing message
                 _mapper.Map(requestObject, message);

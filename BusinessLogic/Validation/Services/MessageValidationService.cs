@@ -13,7 +13,8 @@ namespace BusinessLogic.Validation.Services
         private readonly IValidator<CreateMessageRequest> _createValidator;
         private readonly IValidator<UpdateMessageRequest> _updateValidator;
 
-        public MessageValidationService(ISimpleChatDbContext context,
+        public MessageValidationService(
+            ISimpleChatDbContext context,
             IValidator<CreateMessageRequest> createValidator,
             IValidator<UpdateMessageRequest> updateValidator)
         {
@@ -29,7 +30,7 @@ namespace BusinessLogic.Validation.Services
             if (!validationResult.IsValid)
             {
                 return validationResult;
-            }
+            }            
 
             if (!await ChatIdExists(requestObject.ChatId))
             {
@@ -48,8 +49,18 @@ namespace BusinessLogic.Validation.Services
         {
             var validationResult = await _updateValidator.ValidateAsync(requestObject);
 
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
+
+            if (!await MessageIdExists(requestObject.Id))
+            {
+                validationResult.Errors.Add(new ValidationFailure(nameof(requestObject.Id), "Message Id does not exist."));
+            }
+
             return validationResult;
-        }
+        }              
 
         private async Task<bool> ChatIdExists(int id)
         {
@@ -59,6 +70,11 @@ namespace BusinessLogic.Validation.Services
         private async Task<bool> UserIdExists(int id)
         {
             return await _context.User.AnyAsync(e => e.Id == id);
-        }        
+        }
+
+        private async Task<bool> MessageIdExists(int id)
+        {
+            return await _context.Message.AnyAsync(e => e.Id == id);
+        }
     }
 }
