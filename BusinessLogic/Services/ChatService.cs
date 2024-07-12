@@ -40,7 +40,7 @@ namespace BusinessLogic.Services
             try
             {
                 var chats = await _context.Chat
-                    .Include(m => m.CreatedBy)
+                    .Include(c => c.CreatedBy)
                     .ToListAsync(cancellationToken);
 
                 return _mapper.Map<IEnumerable<ChatDTO>>(chats);
@@ -57,8 +57,8 @@ namespace BusinessLogic.Services
             try
             {
                 var chat = await _context.Chat
-                    .Include(m => m.CreatedBy)
-                    .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+                    .Include(c => c.CreatedBy)
+                    .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
                 if (chat == null)
                 {
@@ -78,8 +78,7 @@ namespace BusinessLogic.Services
         {
             try
             {
-                var chat = await _context.Chat
-                    .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+                var chat = await _context.Chat.FindAsync(new object[] { id }, cancellationToken);
 
                 if (chat == null)
                 {
@@ -105,8 +104,7 @@ namespace BusinessLogic.Services
         {
             try
             {
-                var chat = await _context.Chat
-                    .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+                var chat = await _context.Chat.FindAsync(new object[] { id }, cancellationToken);
 
                 if (chat == null)
                 {
@@ -126,6 +124,24 @@ namespace BusinessLogic.Services
             {
                 _logger.LogError(ex, $"Error occurred while fetching messages of chat with Id: {id}.");
                 throw;
+            }
+        }
+
+        public async Task<List<ChatDTO>> SearchChatsAsync(string searchQuery, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var chats = await _context.Chat
+                    .Include(c => c.CreatedBy)
+                    .Where(c => c.Name.Contains(searchQuery))
+                    .ToListAsync(cancellationToken);
+
+                return _mapper.Map<List<ChatDTO>>(chats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while searching for chats.");
+                return null;
             }
         }
 
@@ -188,7 +204,12 @@ namespace BusinessLogic.Services
             }
         }
 
-        public async Task DeleteAsync(int id, CancellationToken cancellationToken)
+        public Task DeleteAsync(int id, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteAsync(int id, int userId, CancellationToken cancellationToken)
         {
             try
             {
@@ -198,6 +219,11 @@ namespace BusinessLogic.Services
                 {
                     throw new Exception($"Chat with Id: {id} not found.");
                 }
+
+                if(chat.CreatedById != userId)
+                {
+                    throw new Exception($"Denied access. Invalid chat creator Id.");
+                }                
 
                 _context.Chat.Remove(chat);
                 await _context.SaveChangesAsync(cancellationToken);

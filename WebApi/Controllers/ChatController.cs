@@ -78,15 +78,15 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<UserDTO>>> GetAllChatMembers(int id, CancellationToken cancellationToken)
         {
-            var members = await _chatService.GetAllChatMembersAsync(id, cancellationToken);
+            try
+            {
+                var members = await _chatService.GetAllChatMembersAsync(id, cancellationToken);
 
-            if (members == null)
-            {
-                return NotFound();
-            }
-            else
-            {
                 return Ok(members);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
             }
         }
 
@@ -103,15 +103,40 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<List<MessageDTO>>> GetAllChatMessages(int id, CancellationToken cancellationToken)
         {
-            var messages = await _chatService.GetAllChatMessagesAsync(id, cancellationToken);
+            try
+            {
+                var messages = await _chatService.GetAllChatMessagesAsync(id, cancellationToken);
 
-            if (messages == null)
+                return Ok(messages);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Search chats.
+        /// </summary>
+        /// <param name="searchQuery">Text search query.</param>
+        /// <param name="cancellationToken">Cancellation token for async operation.</param>
+        /// <returns>List of chats with matches by name.</returns>
+        /// <response code="200">Success</response>
+        /// <response code="404">Not found</response>
+        [HttpGet("{searchQuery}/search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<List<ChatDTO>>> SearchChats(string searchQuery, CancellationToken cancellationToken)
+        {
+            var chats = await _chatService.SearchChatsAsync(searchQuery, cancellationToken);
+
+            if (chats == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(messages);
+                return Ok(chats);
             }
         }
 
@@ -169,6 +194,7 @@ namespace WebApi.Controllers
         /// Deletes a chat.
         /// </summary>
         /// <param name="id">Chat Id.</param>
+        /// <param name="userId">Chat owner Id.</param>
         /// <param name="cancellationToken">Cancellation token for async operation.</param>
         /// <returns>No content if successful.</returns>
         /// <response code="204">Success</response>
@@ -176,11 +202,11 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+        public async Task<IActionResult> Delete(int id, int userId, CancellationToken cancellationToken)
         {
             try
             {
-                await _chatService.DeleteAsync(id, cancellationToken);
+                await _chatService.DeleteAsync(id, userId, cancellationToken);
 
                 return NoContent();
             }
