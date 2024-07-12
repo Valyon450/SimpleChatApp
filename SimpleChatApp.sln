@@ -3,17 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{98800A58-9509-415E-90E1-CEB4C93A0AD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{98800A58-9509-415E-90E1-CEB4C93A0AD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{DBDA0450-66CE-44FF-8A4C-CB30C5E1D4B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BusinessLogic", "BusinessLogic\BusinessLogic.csproj", "{DBDA0450-66CE-44FF-8A4C-CB30C5E1D4B8}"
 	ProjectSection(ProjectDependencies) = postProject
 		{98800A58-9509-415E-90E1-CEB4C93A0AD4} = {98800A58-9509-415E-90E1-CEB4C93A0AD4}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{B3C3DCE3-A910-436E-9B23-A0A8E1E0A937}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "WebApi\WebApi.csproj", "{B3C3DCE3-A910-436E-9B23-A0A8E1E0A937}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DBDA0450-66CE-44FF-8A4C-CB30C5E1D4B8} = {DBDA0450-66CE-44FF-8A4C-CB30C5E1D4B8}
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C486B94F-B99C-4B7C-AFC7-65FEBCAD34CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Tests\IntegrationTests\IntegrationTests.csproj", "{D59E33AD-B6F5-416C-958A-E3379DB2ACC8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,16 @@ Global
 		{B3C3DCE3-A910-436E-9B23-A0A8E1E0A937}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3C3DCE3-A910-436E-9B23-A0A8E1E0A937}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3C3DCE3-A910-436E-9B23-A0A8E1E0A937}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D59E33AD-B6F5-416C-958A-E3379DB2ACC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59E33AD-B6F5-416C-958A-E3379DB2ACC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59E33AD-B6F5-416C-958A-E3379DB2ACC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59E33AD-B6F5-416C-958A-E3379DB2ACC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D59E33AD-B6F5-416C-958A-E3379DB2ACC8} = {C486B94F-B99C-4B7C-AFC7-65FEBCAD34CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CACA9284-2CF9-4911-9704-224878728B23}
