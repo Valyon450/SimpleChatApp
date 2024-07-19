@@ -7,7 +7,11 @@ namespace DataAccess
     {
         public static void Initialize(SimpleChatDbContext context)
         {
-            context.Database.Migrate();
+            if (context.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+            {
+                context.Database.Migrate();
+            }
+
             // SeedDatabase(context);
         }
 

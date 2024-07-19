@@ -84,3 +84,4 @@ using (var scope = app.Services.CreateScope())
 
 // Run the application
 app.Run();
+public partial class Program { }

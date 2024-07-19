@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using BusinessLogic.DTOs;
 using BusinessLogic.Requests.Chat;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace IntegrationTests
 {
